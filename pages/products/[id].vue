@@ -1,16 +1,25 @@
 <script setup>
 const toast = useToast();
+const store = useStoreCart();
 const { id } = useRoute().params;
 const uri = "https://fakestoreapi.com/products/" + id;
 
 //fetch the product
 const product = await $fetch(uri, { key: id });
-const { addProduct } = useStoreCart();
+const { addProduct } = store;
+// const { productInCart } = storeToRefs(store);
 
 // add to cart
-async function addToCart(product) {
+function addToCart(product) {
 	try {
-		await addProduct(product, 1);
+		addProduct(product, 1); //আগে চেক করবে প্রডাক্ট স্টেটের মধ্যে আছে কি না?
+		if (store.productInCart) {
+			toast.add({
+				title: "Product already in cart!",
+				color: "yellow",
+			});
+			return;
+		}
 		toast.add({
 			title: "Product added successfully!",
 			color: "green",
